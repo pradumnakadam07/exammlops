@@ -3,7 +3,7 @@ name: MLOps CI/CD Pipeline
 on:
   push:
     branches:
-      - main   # Trigger on push to main
+      - main
 
 jobs:
   build-test-deploy:
@@ -11,33 +11,30 @@ jobs:
 
     steps:
     
-    # Step 1: Get code
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    # Step 2: Setup Python
-    - name: Setup Python
+    - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: 3.9
 
-    # Step 3: Install dependencies
+    # ✅ IMPORTANT FIX
     - name: Install Dependencies
       run: |
-        pip install -r requirements.txt
+        python -m pip install --upgrade pip
         pip install pytest
+        pip install flask
 
-    # Step 4: Run tests
+    # ✅ IMPORTANT FIX
     - name: Run Tests
       run: |
-          pytest
+        python -m pytest
 
-    # Step 5: Build Docker image
     - name: Build Docker Image
       run: |
         docker build -t mlops-app .
 
-    # Step 6: Run container (Test Deployment)
     - name: Run Container
       run: |
         docker run -d -p 5000:5000 mlops-app
